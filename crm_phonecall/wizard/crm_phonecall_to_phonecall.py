@@ -47,9 +47,12 @@ class CrmPhonecall2phonecall(models.TransientModel):
     def action_schedule(self):
         """Schedule a phonecall."""
         phonecall_obj = self.env["crm.phonecall"]
-        phonecalls = phonecall_obj.browse(self._context.get("active_ids", []))
+        if 'phonecall_id' in self.env.context:
+            phonecall_ids = self.env["crm.phonecall"].browse(self.env.context.get("phonecall_id"))
+        else:
+            phonecall_ids = self.env["crm.phonecall"].browse(self.env.context.get("active_id"))
         vals = self.get_vals_action_schedule()
-        new_phonecalls = phonecalls.schedule_another_phonecall(
+        new_phonecalls = phonecall_ids.schedule_another_phonecall(
             vals, return_recordset=True
         )
         return new_phonecalls.redirect_phonecall_view()
