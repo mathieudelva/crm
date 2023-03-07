@@ -59,11 +59,9 @@ class CrmPhonecall2phonecall(models.TransientModel):
         """Function gets default values."""
         res = super().default_get(fields)
         res.update({"action": "schedule", "date": time.strftime("%Y-%m-%d %H:%M:%S")})
-        if 'phonecall_id' in self.env.context:
-            phonecall_ids = self.env["crm.phonecall"].browse(self.env.context.get("phonecall_id"))
-        else:
-            phonecall_ids = self.env["crm.phonecall"].browse(self.env.context.get("active_id"))
-        for phonecall in phonecall_ids:
+        for phonecall in self.env["crm.phonecall"].browse(
+            self.env.context.get("active_id")
+        ):
             if "tag_ids" in fields:
                 res.update({"tag_ids": phonecall.tag_ids.ids})
             if "user_id" in fields:
